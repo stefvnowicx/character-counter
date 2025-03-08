@@ -3,7 +3,11 @@ module.exports = {
       "./index.html", // Określ ścieżki do swoich plików HTML i JS
    ],
    theme: {
-      extend: {},
+      extend: {
+         fontFamily: {
+            sans: ["Montserrat", "sans-serif"],
+         },
+      },
    },
    plugins: [],
 };
