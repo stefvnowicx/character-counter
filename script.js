@@ -1,28 +1,41 @@
-// Cache DOM elements
-const textarea = document.querySelector("textarea");
-const totalCharacters = document.querySelector("#total-characters");
-const wordCount = document.querySelector("#word-count");
-const sentenceCount = document.querySelector("#sentence-count");
-const progressBoxes = document.querySelector("#progress-boxes");
+// Global variables
+let limit = null;
+let textarea, totalCharacters, wordCount, sentenceCount, progressBoxes;
+let body, changeBgBtn, limitCharacters, modalBtn, modalInput, textLimitDisplay, modal;
 
-const body = document.querySelector("body");
-const changeBgBtn = document.querySelector(".change-bg");
+const prepareDOMElements = () => {
+   textarea = document.querySelector("textarea");
+   totalCharacters = document.querySelector("#total-characters");
+   wordCount = document.querySelector("#word-count");
+   sentenceCount = document.querySelector("#sentence-count");
+   progressBoxes = document.querySelector("#progress-boxes");
 
-const limitCharacters = document.querySelector("#limit");
-const modalBtn = document.querySelector(".modal-btn");
-const modalInput = document.querySelector(".modal-input");
-const textLimitDisplay = document.querySelector(".text-limit");
-const modal = document.querySelector(".modal");
+   body = document.querySelector("body");
+   changeBgBtn = document.querySelector(".change-bg");
 
-let limit = null; // Global variable for text limit
+   limitCharacters = document.querySelector("#limit");
+   modalBtn = document.querySelector(".modal-btn");
+   modalInput = document.querySelector(".modal-input");
+   textLimitDisplay = document.querySelector(".text-limit");
+   modal = document.querySelector(".modal");
+};
 
-// Event listener for textarea input
-textarea.addEventListener("input", (e) => {
-   updateCharactersCount(e.target.value);
-   updateWordCount(e.target.value);
-   updateSentences(e.target.value);
-   addDensityBox(e.target.value);
-});
+const prepareDOMEvents = () => {
+   textarea.addEventListener("input", (e) => {
+      updateCharactersCount(e.target.value);
+      updateWordCount(e.target.value);
+      updateSentences(e.target.value);
+      addDensityBox(e.target.value);
+   });
+
+   changeBgBtn.addEventListener("click", toggleBg);
+   limitCharacters.addEventListener("click", toggleModal);
+   modalBtn.addEventListener("click", setTextLimit);
+
+   window.addEventListener("DOMContentLoaded", () => {
+      textarea.value = "";
+   });
+};
 
 // Update character count
 const updateCharactersCount = (text) => {
@@ -104,9 +117,6 @@ const toggleBg = () => {
    textarea.classList.toggle("text-zinc-900", isDarkMode);
 };
 
-// Attach background toggle event
-changeBgBtn.addEventListener("click", toggleBg);
-
 // Toggle modal visibility
 const toggleModal = () => {
    modal.classList.toggle("hidden");
@@ -127,6 +137,6 @@ const setTextLimit = () => {
    toggleModal();
 };
 
-// Attach modal events
-limitCharacters.addEventListener("click", toggleModal);
-modalBtn.addEventListener("click", setTextLimit);
+// Initialize
+prepareDOMElements();
+prepareDOMEvents();
