@@ -1,7 +1,9 @@
 // Global variables
+let textInput;
 let limit = null;
+let exclude = false;
 let textarea, totalCharacters, wordCount, sentenceCount, progressBoxes;
-let body, changeBgBtn, limitCharacters, modalBtn, modalInput, textLimitDisplay, modal;
+let body, changeBgBtn, limitCharacters, modalBtn, modalInput, textLimitDisplay, modal, excludeBtn, readingTime;
 
 const prepareDOMElements = () => {
    textarea = document.querySelector("textarea");
@@ -18,28 +20,30 @@ const prepareDOMElements = () => {
    modalInput = document.querySelector(".modal-input");
    textLimitDisplay = document.querySelector(".text-limit");
    modal = document.querySelector(".modal");
+   excludeBtn = document.querySelector(".exclude");
+   readingTime = document.querySelector(".reading-time");
+   textarea.value = "";
 };
 
 const prepareDOMEvents = () => {
    textarea.addEventListener("input", (e) => {
-      updateCharactersCount(e.target.value);
-      updateWordCount(e.target.value);
-      updateSentences(e.target.value);
-      addDensityBox(e.target.value);
+      textInput = e.target.value;
+      updateCharactersCount(textInput);
+      updateWordCount(textInput);
+      updateSentences(textInput);
+      addDensityBox(textInput);
+      estimateReadingTime(textInput);
    });
 
    changeBgBtn.addEventListener("click", toggleBg);
    limitCharacters.addEventListener("click", toggleModal);
    modalBtn.addEventListener("click", setTextLimit);
-
-   window.addEventListener("DOMContentLoaded", () => {
-      textarea.value = "";
-   });
+   excludeBtn.addEventListener("click", toggleExclude);
 };
 
 // Update character count
 const updateCharactersCount = (text) => {
-   totalCharacters.textContent = text.length;
+   totalCharacters.textContent = exclude ? text.replace(/\s/g, "").length : text.length;
 };
 
 // Update word count
@@ -56,6 +60,11 @@ const updateSentences = (text) => {
               .split(/[.!?]+/)
               .filter(Boolean).length
          : 0;
+};
+
+const toggleExclude = () => {
+   exclude = !exclude;
+   updateCharactersCount(textarea.value);
 };
 
 // Calculate letter frequency
@@ -129,12 +138,20 @@ const setTextLimit = () => {
    limitCharacters.checked = false;
 
    const inputLimit = Number(modalInput.value);
-   if (!inputLimit || inputLimit <= 0) return;
+   if (isNaN(inputLimit) || inputLimit <= 0 || !Number.isInteger(inputLimit)) return;
 
    limit = inputLimit;
    textarea.maxLength = limit;
    textLimitDisplay.textContent = `Limit characters: ${limit}`;
    toggleModal();
+};
+
+const estimateReadingTime = (text) => {
+   const wordCount = text.trim().length;
+   console.log(wordCount);
+   const wordsPerSeconds = 200 / 60;
+   const time = Math.ceil(wordCount / wordsPerSeconds);
+   readingTime.textContent = `${time} seconds`;
 };
 
 // Initialize
